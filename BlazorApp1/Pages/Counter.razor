@@ -1,0 +1,28 @@
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+@if (currentCount == 4)
+{
+    <p role="status" style="color: red">Current count: @currentCount</p>
+}
+else
+{
+    <p role="status" style="color: black">Current count: @currentCount</p>  
+}
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int currentCount = 0;
+
+    
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+}

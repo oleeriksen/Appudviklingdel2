@@ -1,0 +1,35 @@
+@page "/shop"
+<h3>Shop</h3>
+
+@foreach (string color in mColors.Keys)
+{
+    <p><InputCheckbox id="@color" @bind-Value="mColors[color]"/>&nbsp;@color</p>
+}
+<p style="background-color: #9ec5fe">Farver som er valgt: @ColorStatus</p>
+
+
+@code {
+    Dictionary<string, bool> mColors = new();
+
+    protected override void OnInitialized()
+    {
+        List<string> colors = [ "blue", "yellow", "green", "black", "white", "red", "brown" ];
+        foreach (string c in colors)
+            mColors.Add(c, false);
+    }
+
+    string[] SelectedColors()
+    {
+        List<string> result = new List<string>();
+        foreach (string cc in mColors.Keys)
+        {
+            if (mColors[cc])
+                result.Add(cc);
+        }
+        return result.ToArray();
+    }
+
+
+    string ColorStatus => string.Join(',',SelectedColors());
+
+}
