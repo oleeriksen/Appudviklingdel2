@@ -1,0 +1,36 @@
+@page "/dice"
+@using Logic;
+<h3>Dicecup</h3>
+
+@foreach (int eyes in cup.Eyes())
+{
+    <span style="font-weight: bold; padding: 10px; font-size: large">@eyes</span>
+}
+<p>
+    <button class="btn @OneLessButtonClass()" @onclick="OneLess">One less</button>
+    <button class="btn btn-primary" @onclick="OnClickShake">Shake</button>
+    <button class="btn btn-primary" @onclick="OneMore">One more</button>
+
+</p>
+@code {
+    DiceCup cup = new DiceCup(2);
+
+
+    private void OnClickShake()
+    {
+        cup.Shake();
+    }
+
+    private void OneLess()
+    {
+        cup = new DiceCup(cup.Count - 1);
+    }
+
+    private string OneLessButtonClass() => cup.Count > 1 ? "btn-primary" : "disabled";
+
+    private void OneMore()
+    {
+        cup = new DiceCup(cup.Count + 1);
+    }
+
+}

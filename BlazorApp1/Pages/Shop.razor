@@ -1,29 +1,40 @@
 @page "/shop"
 <h3>Shop</h3>
 
-@foreach (string color in mColors.Keys)
+@foreach (string color in selectedColors.Keys)
 {
-    <p><InputCheckbox id="@color" @bind-Value="mColors[color]"/>&nbsp;@color</p>
+    <p><InputCheckbox id="@color" @bind-Value="selectedColors[color]"/>&nbsp;@color</p>
 }
-<p style="background-color: #9ec5fe">Farver som er valgt: @ColorStatus</p>
+<p>Farver som er valgt:
+    @foreach (string c in colors)
+    {
+        @if (selectedColors[c])
+        {
+            <span style="background-color: @c;font-weight: bold;">&nbsp;@c</span>
+        }
+    }
+</p>
 
 
 @code {
-    Dictionary<string, bool> mColors = new();
+    
+    private List<string> colors = [ "blue", "yellow", "green", "black", "white", "red", "brown" ];
+
+    // the keys are all the colors and the value indicates whether the key is selected or not
+    private Dictionary<string, bool> selectedColors = new();
 
     protected override void OnInitialized()
     {
-        List<string> colors = [ "blue", "yellow", "green", "black", "white", "red", "brown" ];
         foreach (string c in colors)
-            mColors.Add(c, false);
+            selectedColors.Add(c, false);
     }
 
     string[] SelectedColors()
     {
         List<string> result = new List<string>();
-        foreach (string cc in mColors.Keys)
+        foreach (string cc in colors)
         {
-            if (mColors[cc])
+            if (selectedColors[cc])
                 result.Add(cc);
         }
         return result.ToArray();
