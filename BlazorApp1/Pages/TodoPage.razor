@@ -1,0 +1,39 @@
+@page "/todo"
+@using Logic
+<h3>TodoPage</h3>
+
+@foreach (TodoItem item in items)
+{
+    <InputCheckbox class="form-check-input" @bind-Value="item.IsDone" @oninput="() => OnCheckItem(item)"/>
+    <span style="font-weight: bold; padding: 5px">@item.Text</span>
+    <br/>
+}
+<div class="row p-3">
+    <div class="col-md-4 mb-3">
+        <InputText placeholder = "enter title of todo item" class="form-control" @bind-Value="newItemText"></InputText>
+    </div>
+    <div class="col-md-2 mb-3">
+        <button class="btn btn-primary" @onclick="OnClickAdd">Add</button>
+    </div>
+</div>
+@status
+@code {
+    List<TodoItem> items = new();
+
+    string newItemText = "";
+
+    string status = "";
+
+    private void OnClickAdd()
+    {
+        items.Add(new TodoItem { IsDone = false, Text = newItemText });
+        newItemText = "";
+    }
+
+    private void OnCheckItem(TodoItem item)
+    {
+        item.IsDone = !item.IsDone; // this is done here because the binding occurs after oninput
+        status = $"click on {item.Text} - IsDone = {item.IsDone}";
+    }
+
+}

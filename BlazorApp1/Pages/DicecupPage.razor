@@ -4,6 +4,7 @@
 
 @foreach (int eyes in cup.Eyes())
 {
+    <img src=@PathTo(eyes) />
     <span style="font-weight: bold; padding: 10px; font-size: large">@eyes</span>
 }
 <p>
@@ -16,6 +17,10 @@
     DiceCup cup = new DiceCup(2);
 
 
+   
+
+    private string PathTo(int eyes) => $"images/dices/dice{eyes}.png";
+    
     private void OnClickShake()
     {
         cup.Shake();

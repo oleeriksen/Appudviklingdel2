@@ -1,7 +1,7 @@
 @page "/shop"
 <h3>Shop</h3>
 
-@foreach (string color in selectedColors.Keys)
+@foreach (string color in colors)
 {
     <p><InputCheckbox id="@color" @bind-Value="selectedColors[color]"/>&nbsp;@color</p>
 }
@@ -10,10 +10,11 @@
     {
         @if (selectedColors[c])
         {
-            <span style="background-color: @c;font-weight: bold;">&nbsp;@c</span>
+            <span style="background-color: @c;font-weight: bold;">@c</span>
         }
     }
 </p>
+
 
 
 @code {

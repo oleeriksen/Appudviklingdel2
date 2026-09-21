@@ -1,0 +1,56 @@
+@page "/shop2"
+@using Logic
+<h3>Shop2 - farve filter</h3>
+
+@foreach (string color in selectedColors.Keys)
+{
+    <p><InputCheckbox id="@color" @bind-Value="selectedColors[color]"/>&nbsp;@color</p>
+}
+<p>Farver som er valgt:
+    @foreach (string c in colors)
+    {
+        @if (selectedColors[c])
+        {
+            <span style="background-color: @c;font-weight: bold;">@c</span>
+        }
+    }
+</p>
+@foreach (Item x in s.ItemsWithColor(SelectedColors()))
+{
+    <span>@x.Name</span>
+    <span>@x.Price</span>    
+    <span>@x.Color</span>    
+    <span>@x.Stock</span>
+    <br/>
+}
+
+
+@code {
+
+    Shop s = new();
+    private List<string> colors = [ "blue", "yellow", "green", "black", "white", "red", "brown" ];
+
+    // the keys are all the colors and the value indicates whether the key is selected or not
+    private Dictionary<string, bool> selectedColors = new();
+
+    protected override void OnInitialized()
+    {
+        foreach (string c in colors)
+            selectedColors.Add(c, false);
+    }
+
+    string[] SelectedColors()
+    {
+        List<string> result = new List<string>();
+        foreach (string cc in colors)
+        {
+            if (selectedColors[cc])
+                result.Add(cc);
+        }
+        return result.ToArray();
+    }
+
+
+    string ColorStatus => string.Join(',',SelectedColors());
+
+}
