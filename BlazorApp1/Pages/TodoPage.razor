@@ -4,7 +4,7 @@
 
 @foreach (TodoItem item in items)
 {
-    <InputCheckbox class="form-check-input" @bind-Value="item.IsDone" @oninput="() => OnCheckItem(item)"/>
+    <span class=@ClassforIsDone(item) @onclick="() => OnCheckItem(item)"></span>
     <span style="font-weight: bold; padding: 5px">@item.Text</span>
     <br/>
 }
@@ -30,10 +30,11 @@
         newItemText = "";
     }
 
+    private string ClassforIsDone(TodoItem item) => item.IsDone ? "bi bi-check-circle" : "bi bi-circle";
+
     private void OnCheckItem(TodoItem item)
     {
-        item.IsDone = !item.IsDone; // this is done here because the binding occurs after oninput
-        status = $"click on {item.Text} - IsDone = {item.IsDone}";
+        item.IsDone = !item.IsDone;
     }
 
 }
