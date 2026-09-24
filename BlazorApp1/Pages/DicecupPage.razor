@@ -1,10 +1,12 @@
 @page "/dice"
 @using Logic;
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+
 <h3>Dicecup</h3>
 
 @foreach (int eyes in cup.Eyes())
 {
-    <img src=@PathTo(eyes) />
+    <img src=@PathTo(eyes) width="80"/>
     <span style="font-weight: bold; padding: 10px; font-size: large">@eyes</span>
 }
 <p>
@@ -17,7 +19,11 @@
     DiceCup cup = new DiceCup(2);
 
 
-   
+    protected override async Task OnInitializedAsync()
+    {
+        int? data = await localStore.GetItemAsync<int>("dicecount");
+        cup = data is null ? new DiceCup(2) : new DiceCup(data.Value);
+    }
 
     private string PathTo(int eyes) => $"images/dices/dice{eyes}.png";
     
@@ -26,16 +32,20 @@
         cup.Shake();
     }
 
-    private void OneLess()
+    private async Task OneLess()
     {
         cup = new DiceCup(cup.Count - 1);
+        await localStore.SetItemAsync("dicecount", cup.Count);
+
     }
 
     private string OneLessButtonClass() => cup.Count > 1 ? "btn-primary" : "disabled";
 
-    private void OneMore()
+    private async Task OneMore()
     {
         cup = new DiceCup(cup.Count + 1);
+        await localStore.SetItemAsync("dicecount", cup.Count);
+
     }
 
 }
