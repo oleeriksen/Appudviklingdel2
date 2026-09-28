@@ -1,0 +1,62 @@
+﻿@page "/productlist"
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager nav
+@using Logic
+<h1 class="mb-3 mt-3">Product list</h1>
+
+@if (products != null)
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Navn</th>
+            <th>Pris</th>
+            <th>Publicering</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var p in products)
+        {
+            <tr>
+                <td>@p.Name</td>
+                <td>@p.Price</td>
+                <td>@p.PublishedDate.ToShortDateString()
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+        <button class="btn btn-primary" @onclick="GoToAddProduct">New Product</button>
+    
+}
+else
+{
+    <scan>Loading products....just a moment... ;-)</scan>
+}
+
+@code {
+
+    private List<Product>? products;
+    
+    private Product aProduct = new();
+    
+    private string[] categories = ["computer", "audio", "video", "memory", "other"];
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var p = await localStorage.GetItemAsync<List<Product>>("productlist");
+        products = p ?? new List<Product>();
+    }
+    
+
+    private void GoToAddProduct()
+    {
+        nav.NavigateTo("addproduct");
+    }
+    
+
+}
+
+

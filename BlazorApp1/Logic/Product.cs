@@ -18,6 +18,13 @@ public class Product
         public DateTime PublishedDate { get; set; } = DateTime.Now;
 
         public bool IsPublished { get; set; }
+        
+        [Required]
+        [Range(1,int.MaxValue, ErrorMessage = "Stock must be positive")]
+        public int? Stock { get; set; }
+
+        [Required] public string Category { get; set; } = "";
+
     }
 
 

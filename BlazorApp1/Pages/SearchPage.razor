@@ -29,7 +29,7 @@ else
     private async Task<string[]> LoadAllWords()
     {
         string content = await Http.GetStringAsync("sample-data/words.txt");
-        //await Task.Delay(3000); // just to demo/test slow server...
+        await Task.Delay(3000); // just to demo/test slow server...
         return content.Split("\n");
     }
 }
