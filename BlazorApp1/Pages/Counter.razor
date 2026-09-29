@@ -11,7 +11,7 @@
 }
 else
 {
-    <p role="status" style="color: black">Current count: @currentCount</p>  
+    <p role="status" style="color: black">Current count: @currentCount</p>
 }
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
@@ -40,7 +40,7 @@ else
 
     private async Task ResetCount()
     {
-        currentCount = 0;
+        currentCount++;
         await localStore.SetItemAsync<int>("count", currentCount);
     }
 
