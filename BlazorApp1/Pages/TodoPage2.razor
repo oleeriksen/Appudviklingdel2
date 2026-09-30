@@ -1,0 +1,68 @@
+@page "/todo2"
+@using BlazorApp1.Components
+@using Logic
+<h3>TodoPage</h3>
+
+<div class="col-md-2 mb-3">
+    <span class="bi bi-plus-circle" @onclick="OnClickAdd"></span>
+</div>
+
+
+@foreach (TodoItem item in items)
+{
+    <span class=@ClassforIsDone(item) @onclick="() => OnCheckItem(item)"></span>
+    <span style="font-weight: bold; padding: 5px">@item.Text</span>
+    <br/>
+}
+
+
+<ModalDialog @ref="AddDialog" Title="New todo...">
+<div class="row p-3">
+    <div class="col-md-4 mb-3">
+        <InputText placeholder = "enter title of todo item" class="form-control" @bind-Value="newItemText"></InputText>
+    </div>
+    <div class="col-md-2 mb-3">
+        <button class="btn btn-primary" @onclick="OnClickCancel">Cancel</button>
+    </div>
+    <div class="col-md-2 mb-3">
+        <button class="btn btn-primary" @onclick="OnClickOK">OK</button>
+    </div>
+</div>
+</ModalDialog>
+@code {
+    List<TodoItem> items = new();
+
+    ModalDialog AddDialog { get; set; }
+
+
+
+    string newItemText = "";
+
+    string status = "";
+
+    private void OnClickAdd()
+    {
+        AddDialog.Open();
+        
+    }
+
+    private string ClassforIsDone(TodoItem item) => item.IsDone ? "bi bi-check-circle" : "bi bi-circle";
+
+    private void OnCheckItem(TodoItem item)
+    {
+        item.IsDone = !item.IsDone;
+    }
+
+    private void OnClickCancel()
+    {
+        AddDialog.Close();
+    }
+
+    private void OnClickOK()
+    {
+        items.Add(new TodoItem { IsDone = false, Text = newItemText });
+        newItemText = "";
+        AddDialog.Close();
+    }
+
+}
