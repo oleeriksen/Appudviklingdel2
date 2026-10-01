@@ -1,6 +1,7 @@
 ﻿@page "/productlist"
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager nav
+@using BlazorApp1.Components
 @using Logic
 <h1 class="mb-3 mt-3">Product list</h1>
 
@@ -12,17 +13,13 @@
             <th>Navn</th>
             <th>Pris</th>
             <th>Publicering</th>
+            <th>Delete</th>
         </tr>
         </thead>
         <tbody>
         @foreach (var p in products)
         {
-            <tr>
-                <td>@p.Name</td>
-                <td>@p.Price</td>
-                <td>@p.PublishedDate.ToShortDateString()
-                </td>
-            </tr>
+            <ProductComponent TheProduct="@p" DeleteCallBack="DeleteProduct"></ProductComponent>
         }
         </tbody>
     </table>
@@ -43,20 +40,23 @@ else
     private string[] categories = ["computer", "audio", "video", "memory", "other"];
 
 
+    async Task DeleteProduct(Product p)
+    {
+        products.Remove(p);
+        await localStorage.SetItemAsync("productlist", products);
+    }
 
     protected override async Task OnInitializedAsync()
     {
         var p = await localStorage.GetItemAsync<List<Product>>("productlist");
         products = p ?? new List<Product>();
     }
-    
 
     private void GoToAddProduct()
     {
         nav.NavigateTo("addproduct");
     }
     
-
 }
 
 

@@ -1,4 +1,5 @@
-﻿@page "/counter"
+﻿@page "/counter/{delta:int}"
+@page "/counter"
 @inject Blazored.LocalStorage.ILocalStorageService localStore
 
 
@@ -18,8 +19,9 @@ else
 <button class="btn btn-primary" @onclick="ResetCount">Reset</button>
 
 @code {
+    [Parameter] public int? delta { get; set; } = 1;
     
-    private int currentCount = 0;
+    private int? currentCount = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,18 +32,24 @@ else
             currentCount = 0;
         else
             currentCount = data.Value; */
-       }
+        if (delta is null)
+            delta = 1;
+        else
+        {
+            delta = delta.Value;
+        }
+    }
 
     private async Task IncrementCount()
     {
-        currentCount++;
-        await localStore.SetItemAsync<int>("count", currentCount);
+        currentCount = currentCount + delta;
+        await localStore.SetItemAsync<int?>("count", currentCount);
     }
 
     private async Task ResetCount()
     {
         currentCount++;
-        await localStore.SetItemAsync<int>("count", currentCount);
+        await localStore.SetItemAsync<int?>("count", currentCount);
     }
 
 }

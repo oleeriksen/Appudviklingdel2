@@ -1,0 +1,20 @@
+@using Logic
+<tr>
+    <td>@TheProduct.Name</td>
+    <td>@TheProduct.Price</td>
+    <td>@TheProduct.PublishedDate.ToShortDateString()</td>
+    <td><span class="bi bi-x-circle" @onclick="Delete"></span></td>
+</tr>
+
+@code {
+    [Parameter] public Product TheProduct { get; set; }
+
+    [Parameter] public EventCallback<Product> DeleteCallBack { get; set; }
+
+
+    private void Delete()
+    {
+        DeleteCallBack.InvokeAsync(TheProduct);
+    }
+
+}

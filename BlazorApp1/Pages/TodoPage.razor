@@ -1,4 +1,5 @@
 @page "/todo"
+@using BlazorApp1.Components
 @using Logic
 <h3>TodoPage</h3>
 
@@ -8,15 +9,21 @@
     <span style="font-weight: bold; padding: 5px">@item.Text</span>
     <br/>
 }
-<div class="row p-3">
-    <div class="col-md-4 mb-3">
-        <InputText placeholder = "enter title of todo item" class="form-control" @bind-Value="newItemText"></InputText>
+
+<ModalDialog Title="OPret en ny todo... version 2" @ref="AddDialog">
+    <div class="row p-3">
+        <div class="col-md-4 mb-3">
+            <InputText placeholder = "enter title of todo item" class="form-control" @bind-Value="newItemText"></InputText>
+        </div>
+        <div class="col-md-2 mb-3">
+            <button class="btn btn-primary" @onclick="OnClickOK">OK</button>
+        </div>
     </div>
-    <div class="col-md-2 mb-3">
-        <button class="btn btn-primary" @onclick="OnClickAdd">Add</button>
-    </div>
+</ModalDialog>
+
+<div class="col-md-2 mb-3">
+    <button class="btn btn-primary" @onclick="OnClickAdd">Add</button>
 </div>
-@status
 @code {
     List<TodoItem> items = new();
 
@@ -24,10 +31,11 @@
 
     string status = "";
 
+    ModalDialog AddDialog { get; set; }
+
     private void OnClickAdd()
     {
-        items.Add(new TodoItem { IsDone = false, Text = newItemText });
-        newItemText = "";
+        AddDialog.Open();
     }
 
     private string ClassforIsDone(TodoItem item) => item.IsDone ? "bi bi-check-circle" : "bi bi-circle";
@@ -35,6 +43,13 @@
     private void OnCheckItem(TodoItem item)
     {
         item.IsDone = !item.IsDone;
+    }
+
+    private void OnClickOK()
+    {
+        items.Add(new TodoItem() { Text = newItemText });
+        newItemText = "";
+        AddDialog.Close();
     }
 
 }
