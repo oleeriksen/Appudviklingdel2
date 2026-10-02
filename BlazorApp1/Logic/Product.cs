@@ -3,7 +3,9 @@
 using System.ComponentModel.DataAnnotations;
 
 public class Product
-    {
+{
+        public int Id { get; set; } = Random.Shared.Next() + 1;
+
         [Required]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters.")]
         public string? Name { get; set; }

@@ -1,4 +1,4 @@
-@page "/addproduct"
+@page "/productdetail/{id:int}"
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager navManager
 @using BlazorApp1.Components
@@ -60,7 +60,9 @@
 
 @code {
 
-    private List<Product> products = new();
+    [Parameter] public int id { get; set; }
+    
+    private List<Product> products;
     
     private string[] categories = ["computer", "audio", "video", "memory", "other"];
 
@@ -71,11 +73,18 @@
     {
         var p = await localStorage.GetItemAsync<List<Product>>("productlist");
         products = p ?? new();
+        if (id == 0) // we must create a new product
+            aProduct = new();
+        else
+        {
+            aProduct = products.Where(p => p.Id == id).First();
+        }
     }
 
     private async Task HandleSubmit()
     {
-        products.Add(aProduct);
+        if (id == 0)
+             products.Add(aProduct);
         await localStorage.SetItemAsync("productlist", products);
         navManager.NavigateTo("productlist");
     }

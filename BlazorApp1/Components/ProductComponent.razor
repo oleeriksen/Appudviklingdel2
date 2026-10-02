@@ -1,9 +1,12 @@
 @using Logic
+@inject NavigationManager nav
 <tr>
     <td>@TheProduct.Name</td>
     <td>@TheProduct.Price</td>
     <td>@TheProduct.PublishedDate.ToShortDateString()</td>
     <td><span class="bi bi-x-circle" @onclick="Delete"></span></td>
+    <td><span class="bi bi-pencil" @onclick="Edit"></span></td>
+    
 </tr>
 
 @code {
@@ -15,6 +18,11 @@
     private void Delete()
     {
         DeleteCallBack.InvokeAsync(TheProduct);
+    }
+
+    private void Edit()
+    {
+        nav.NavigateTo($"productdetail/{TheProduct.Id}");
     }
 
 }
