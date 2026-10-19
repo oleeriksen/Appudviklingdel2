@@ -1,4 +1,4 @@
-﻿namespace Logic;
+﻿namespace BlazorApp1.Logic;
 
 using System.ComponentModel.DataAnnotations;
 

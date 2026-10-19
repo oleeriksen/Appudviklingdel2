@@ -1,4 +1,4 @@
-namespace Logic;
+namespace BlazorApp1.Logic;
 
 public class TodoItem
 {
