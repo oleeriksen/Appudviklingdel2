@@ -1,5 +1,7 @@
 ﻿@page "/counter"
+@using BlazorApp1.Logic
 @inject Blazored.LocalStorage.ILocalStorageService localStore
+@inject NavigationManager nav
 
 
 <PageTitle>Counter</PageTitle>
@@ -30,7 +32,11 @@ else
             currentCount = 0;
         else
             currentCount = data.Value; */
-       }
+        User? loggedIn = await localStore.GetItemAsync<User>("user");
+        if (loggedIn == null || loggedIn.Role != "admin")
+            nav.NavigateTo("login");
+            
+    }
 
     private async Task IncrementCount()
     {
