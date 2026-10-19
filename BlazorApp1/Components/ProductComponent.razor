@@ -4,15 +4,20 @@
     <td>@TheProduct.Name</td>
     <td>@TheProduct.Price</td>
     <td>@TheProduct.PublishedDate.ToShortDateString()</td>
-    <td><span class="bi bi-x-circle" @onclick="Delete"></span></td>
-    <td><span class="bi bi-pencil" @onclick="Edit"></span></td>
-    
+    @if (TheUser.Role == "admin")
+    {
+        <td><span class="bi bi-x-circle" @onclick="Delete"></span></td>
+        <td><span class="bi bi-pencil" @onclick="Edit"></span></td>
+    }
 </tr>
 
 @code {
     [Parameter] public Product TheProduct { get; set; }
 
     [Parameter] public EventCallback<Product> DeleteCallBack { get; set; }
+    
+    [Parameter] public User TheUser { get; set; }
+    
 
 
     private void Delete()

@@ -1,4 +1,5 @@
 @page "/login"
+@page "/login/{returnto:alpha}"
 @using BlazorApp1.Logic
 @using Blazored.LocalStorage
 @using BlazorApp1.Service
@@ -44,6 +45,9 @@
 </div>
 
 @code {
+
+    [Parameter] public string ReturnTo { get; set; }
+    
     User user = new();
     
     //Bruges til at vise errortext hvis relevant - ellers er den tom
@@ -72,7 +76,12 @@
         else
         {
             await localStorage.SetItemAsync("user", userObject);
-            navManager.NavigateTo("/"); 
+            if (String.IsNullOrEmpty(ReturnTo))
+                navManager.NavigateTo("/");
+            else
+            {
+                navManager.NavigateTo(ReturnTo);
+            }
         }
     }
 }
