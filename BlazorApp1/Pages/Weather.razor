@@ -41,13 +41,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
-        DateTime day = DateTime.Today;
-        foreach (var wf in forecasts)
-        {
-            wf.Date = day;
-            day = day.AddDays(1);
-        }
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("http://localhost:5019/weatherforecast/12");
+        
     }
 
     public class WeatherForecast
