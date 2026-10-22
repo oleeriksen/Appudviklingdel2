@@ -3,33 +3,254 @@
 
 <h3>SearchPage</h3>
 
-@if (viewedWords != null)
-{
-    <ul>
-        @foreach (var w in viewedWords)
-        {
-            <li>@w</li>
-        }
-    </ul>
-}
-else
-{
-    <p>waiting for words to be loaded...</p>
-}
-@code {
-    string[]? viewedWords; // the words visible on the page
-    
-    protected override async Task OnInitializedAsync()
+<div class="row p-3">
+    <div class="col-md-4">
+        <InputText placeholder="Search for words..." class="form-control" @bind-Value="searchInput"></InputText>
+    </div>
+    <div class="col-md-8">
+        <button type="button" class="btn btn-primary me-2" @onclick="GetWordsStartingWith">
+            Starts With
+        </button>
+        <button type="button" class="btn btn-primary me-2" @onclick="GetWordsContaining">
+                Contains
+            </button>
+        <button type="button" class="btn btn-primary me-2" @onclick="GetWordsDistance1">
+            Distance 1
+        </button>
+    </div>
+</div>
+
+<span>Search results: @searchSummary</span>
+
+<ul>
+    @foreach (string word in viewedWords)
     {
-        string[] wordsFromFile = await LoadAllWords();
-        
-        viewedWords = wordsFromFile.Take(100).ToArray();
+        <li>@word</li>
+    }
+</ul>
+
+
+@if (searchResults.Count != 0 && viewedWords.Count != 0)
+{
+    <span>@showStatus</span>
+    <div class="col-md-8">
+        <button type="button" class="btn btn-primary me-2" @onclick="ShowLessWords" disabled="@btnShowLessStatus">
+            Show less
+        </button>
+        <button type="button" class="btn btn-primary me-2" @onclick="ShowMoreWords" disabled="@btnShowMoreStatus">
+            Show more
+        </button>
+    </div>
+}
+
+@code {
+    bool isLoading = true; // bool til at tjekke, om der er indlæst ord til siden fra .txt
+    List<string> allWords = new(); // all words from txt file - variable for source data - Not to be manipulated!
+    List<string> searchResults = new(); // List for full search result after interaction from user - To be manipulated!
+    List<string> viewedWords = new(); // the words visible on the page - List of Strings - To be manipulated!
+    string searchInput = ""; // search input from user
+    string searchSummary = "Waiting for words to be loaded..."; // default search result message
+    string searchMethod = ""; // search method selected by user - used for searchSummary message
+    int showIndex = 1; // index for showing 10 results at a time. 0 = result [0] to [9]. 1 = result [10] to [19]...
+    string showStatus = ""; // Status for telling user which index (of 10 results) in the searchresult is being showed
+    bool btnShowLessStatus = true;
+    bool btnShowMoreStatus = true;
+
+    /* Load when page is initialized
+     * Calls LoadAllWords()
+     * Sets default number of visible words on page by .Take(100).ToList()
+     * Sets isLoading to false after viewedWords has some elements
+     */
+    protected override async Task OnInitializedAsync() 
+    {
+        allWords = await LoadAllWords();
+        searchResults = allWords.ToList();
+        viewedWords = searchResults.Take(10).ToList();
+        isLoading = false;
+        searchSummary = $"Showing {viewedWords.Count} of {allWords.Count} words";
+        UpdateBtnStatus();
     }
 
-    private async Task<string[]> LoadAllWords()
+
+    /* LoadAllWords(): 
+     * Henter data fra .txt (ord opdelt af linjeskift) og returnerer ordene opdelt i en List<string>
+     * 
+     * Data gemmes som string content
+     * Split("\n") finder "\n" (som er linjeskift) og deler teksten op 
+     * * Men Windows markerer linjeskift med to tegn: \r\n. 
+     * * Dvs. kan filen indeholde ["aardvark\r\n aardvarks\r\n abaca\r\n"] som efter .Split("\n") bliver til ["aardvark\r", "aardvarks\r", "abaca\r"...])
+     * * Fx MAC og Linux benytter blot \n og ældre MAC-systemer benytter kun \r. 
+     * * Hvis jeg var sikker på, at filen konsekvent KUN indeholder \r\n, kunne jeg nøjes med .Split("\r\n"). Men jeg er ikke sikker, så jeg benytter .Trim() - mere robus.
+     * Med foreach gennemgår vi hvert element fra .Split("\n") og anvender Trim() hver string
+     * Trim() returnerer en string uden "blanktegn" (fx ekstra usynlige tegn "\r" og mellemrum) i starten og slutningen
+    */
+    private async Task<List<string>> LoadAllWords()
     {
         string content = await Http.GetStringAsync("sample-data/words.txt");
-        await Task.Delay(3000); // just to demo/test slow server...
-        return content.Split("\n");
+        List<string> words = new();
+        foreach (string word in content.Split("\n"))
+        {
+            words.Add(word.Trim());
+        }
+        return words;
+    }
+
+    /* GetWordsStartingWith():
+     * viewedWords is changed to a List of words which starts with searchInput
+    */
+    private void GetWordsStartingWith()
+    {
+        showIndex = 1;
+        searchResults.Clear();
+        searchSummary = "Waiting for search results...";
+
+        foreach(string word in allWords)
+        {
+            if(word.StartsWith(searchInput))
+            {
+                searchResults.Add(word);
+            }
+        }
+
+        searchMethod = "starting with";
+        ShowResults();
+        UpdateResultStatus();
+    }
+
+    /* GetWordsContaining():
+     * viewedWords is changed to a List of words which contains searchInput
+    */
+    private void GetWordsContaining()
+    {
+        showIndex = 1;
+        searchResults.Clear();
+        searchSummary = "Waiting for search results...";
+
+        foreach(string word in allWords)
+        {
+            if(word.Contains(searchInput))
+            {
+                searchResults.Add(word);
+            }
+        }
+        searchMethod = "contaiting";
+        ShowResults();
+        UpdateResultStatus();
+    }
+
+    private void GetWordsDistance1()
+    {
+        showIndex = 1;
+        searchResults.Clear();
+        searchSummary = "Waiting for search results...";
+
+        foreach(string word in allWords)
+        {
+            if(word.Length != searchInput.Length)
+            {
+                continue;
+            }
+            else
+            {
+                int diffCount = 0;
+                for(int i = 0; i < word.Length && diffCount <= 1; i++)
+                {
+                    if (word[i] != searchInput[i])
+                    {
+                        diffCount++;
+                    }
+                }
+                if(diffCount <= 1)
+                {
+                    searchResults.Add(word);
+                }
+            }
+        }
+
+        searchMethod = "with distance of 1 from";
+        ShowResults();
+        UpdateResultStatus();
+    }
+
+    /* ShowMoreWords():
+     * If List is long enough, increment showIndex is allowed
+     */
+    private void ShowMoreWords()
+    {
+        if (showIndex * 10 < searchResults.Count)
+        {
+            showIndex++;
+        }
+        ShowResults();
+    }   
+
+    /* ShowLessWords():
+     * If List is short enough, decrement showIndex is allowed
+     */
+    private void ShowLessWords()
+    {
+        if (showIndex > 1)
+        {
+            showIndex--;
+        }
+        ShowResults();
+    }
+
+    /* ShowResults():
+     * update viewedWords List 
+     * viewedWords new .Count value depends on showIndex
+     * Take(showIndex * 10) takes (showIndex * 10)words from searchResults and saves them in viewedWords (showIndex = 1 shows 10 words, showIndex = 2 shows 20 words...) 
+     */
+    private void ShowResults()
+    {
+        viewedWords = searchResults.Take(showIndex * 10).ToList();
+        UpdateShowStatus();
+        UpdateBtnStatus();
+    }
+
+    /* UpdateResultStatus():
+     * Updates UI, telling how many words is found in search, which search method was used, and which text sequence was used in search.
+     */
+    private void UpdateResultStatus()
+    {
+        if(searchInput.Length != 0 && isLoading == false)
+        {
+            searchSummary = $"Found {searchResults.Count} words {searchMethod} {searchInput}";
+        }
+    }
+
+    /* UpdateShowStatus():
+     * Updates UI showing how many words is being shown between 1 and the amount of elements(words) in the viewedWords List
+     */
+    private void UpdateShowStatus()
+    {
+        int minIndex = 1;
+        int maxIndex = viewedWords.Count;
+        showStatus = $"Showing results {minIndex} to {maxIndex} of {searchResults.Count}";
+    }
+
+    /* UpdateBtnStatus():
+     * Updates UI enabling or disabling buttons for showing more or less words
+     * If there are more results than what is currently being shown, 
+     */
+    private void UpdateBtnStatus()
+    {
+        if (viewedWords.Count <= 10)
+        {
+            btnShowLessStatus = true;
+        }
+        else
+        {
+            btnShowLessStatus = false;
+        }
+
+        if (viewedWords.Count >= searchResults.Count)
+        {
+            btnShowMoreStatus = true;
+        }
+        else
+        {
+            btnShowMoreStatus = false;
+        }
     }
 }

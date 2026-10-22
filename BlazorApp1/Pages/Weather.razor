@@ -1,4 +1,5 @@
 ﻿@page "/weather"
+@using Core
 @inject HttpClient Http
 
 <PageTitle>Weather</PageTitle>
@@ -7,6 +8,14 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
+<div class="row p3">
+<div class="col-md-6 mb-3">
+    <InputNumber @bind-Value="amount" class="form-control"></InputNumber>
+</div>
+<div class="col-md-6 mb-3">
+    <button class="btn btn-primary" @onclick="OnClickFetch">Fetch</button>
+</div>
+</div>
 @if (forecasts == null)
 {
     <p>
@@ -37,28 +46,20 @@ else
 }
 
 @code {
+
+    private int amount = 10;
     private WeatherForecast[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
-        DateTime day = DateTime.Today;
-        foreach (var wf in forecasts)
-        {
-            wf.Date = day;
-            day = day.AddDays(1);
-        }
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>($"http://localhost:5029/api/vejr/random/{amount}");
     }
+    
 
-    public class WeatherForecast
+    private async Task OnClickFetch()
     {
-        public DateTime Date { get; set; }
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>($"http://localhost:5029/api/vejr/random/{amount}");
 
-        public int TemperatureC { get; set; }
-
-        public string? Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
 
 }
