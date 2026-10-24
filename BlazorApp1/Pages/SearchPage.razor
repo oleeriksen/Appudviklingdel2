@@ -31,8 +31,8 @@ else
 }
 
 @code {
+    string serverUrl = "http://localhost:5029/api/word";
     string[]? viewedWords; // the words visible on the page
-    string[]? wordsFromFile; // all the words stored
     string[]? searchResults;
     private string userInput = ""; // used @bind in input field to fill out the empty string
     private string searchString = ""; // @bind paragraph to show text string for results
@@ -40,16 +40,10 @@ else
     
     protected override async Task OnInitializedAsync()
     {
-        wordsFromFile = await LoadAllWords();
-        searchResults = wordsFromFile;
+        
+        searchResults = await Http.GetFromJsonAsync<string[]>($"{serverUrl}/first/100");
         displayCount = 10;
         UpdateView();
-    }
-
-    private async Task<string[]> LoadAllWords()
-    {
-        string content = await Http.GetStringAsync("sample-data/words.txt");
-        return content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries); // added more splits
     }
     
     private void UpdateView()
@@ -64,100 +58,28 @@ else
         UpdateView();
     }
 
-    private void OnStartsWith()
+    private async Task OnStartsWith()
     {
-        if (wordsFromFile == null) return;
         
-        List<string> matches = new List<string>(); // list is easier to work with than array
-        
-        foreach (string word in wordsFromFile)
-        {
-            if (word.StartsWith(userInput, StringComparison.OrdinalIgnoreCase)) // ignore case
-            {
-                matches.Add(word);
-            }
-        }
-        
-        searchResults = matches.ToArray();
+        searchResults = await Http.GetFromJsonAsync<string[]>($"{serverUrl}/startswith/{userInput}");
         displayCount = 10;
         UpdateView();
-        
-        if (searchResults.Length == 1)
-        {
-            searchString = $"Your search resulted in 1 word starting with '{userInput}'";   
-        }
-        else
-        {
-            searchString = $"Your search resulted in {searchResults.Length} words starting with '{userInput}'";   
-        }
+        searchString = $"Your search resulted in {searchResults.Length} word(s) starting with '{userInput}'";   
     }
 
-    private void OnContains()
+    private async Task OnContains()
     {
-        if (wordsFromFile == null) return;
-        
-        List<string> matches = new List<string>();
-        
-        foreach (string word in wordsFromFile)
-        {
-            if (word.Contains(userInput, StringComparison.OrdinalIgnoreCase))
-            {
-                matches.Add(word);
-            }
-        }
-        
-        searchResults = matches.ToArray();
+        searchResults = await Http.GetFromJsonAsync<string[]>($"{serverUrl}/contains/{userInput}");
         displayCount = 10;
         UpdateView();
-        
-        if (searchResults.Length == 1)
-        {
-            searchString = $"Your search resulted in 1 word containing '{userInput}'";   
-        }
-        else
-        {
-            searchString = $"Your search resulted in {searchResults.Length} words containing '{userInput}'";   
-        }
+        searchString = $"Your search resulted in {searchResults.Length} word(s) containing '{userInput}'";   
     }
 
-    private void OnDistance1()
+    private async Task OnDistance1()
     {
-        if (wordsFromFile == null) return;
-
-        List<string> matches = new List<string>();
-
-        foreach (string word in wordsFromFile)
-        {
-            if (word.Length == userInput.Length)
-            {
-                int distance = 0;
-
-                for (int i = 0; i < userInput.Length; i++)
-                {
-                    if (char.ToLower(word[i]) != char.ToLower(userInput[i]))
-                    {
-                        distance++;
-                    }
-                }
-
-                if (distance <= 1)
-                {
-                    matches.Add(word);
-                }
-            }
-        }
-
-        searchResults = matches.ToArray();
+        searchResults = await Http.GetFromJsonAsync<string[]>($"{serverUrl}/distance1/{userInput}");
         displayCount = 10;
         UpdateView();
-        
-        if (searchResults.Length == 1)
-        {
-            searchString = $"Your search resulted in 1 word with a distance of 1 from '{userInput}'";  
-        }
-        else
-        {
-            searchString = $"Your search resulted in {searchResults.Length} words with a distance of 1 from '{userInput}'";
-        }
+        searchString = $"Your search resulted in {searchResults.Length} word(s) with distance 1 to '{userInput}'";   
     }
 }
