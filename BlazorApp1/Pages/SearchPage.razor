@@ -20,6 +20,10 @@
         }
     </ul>
     
+    @if (viewedWords != null && displayCount > 10)
+    {
+        <button class="btn btn-secondary btn-sm" @onclick="ShowLess">Show Less</button>
+    }
     @if (searchResults != null && displayCount < searchResults.Length)
     {
         <button class="btn btn-secondary btn-sm" @onclick="ShowMore">Show More</button>
@@ -57,11 +61,19 @@ else
         displayCount += 10;
         UpdateView();
     }
+    
+    private void ShowLess()
+    {
+        displayCount -= 10;
+        UpdateView();
+    }
 
     private async Task OnStartsWith()
     {
         
-        searchResults = await Http.GetFromJsonAsync<string[]>($"{serverUrl}/startswith/{userInput}");
+        //searchResults = await Http.GetFromJsonAsync<string[]>($"{serverUrl}/startswith/{userInput}");
+        searchResults = await Http.GetFromJsonAsync<string[]>($"{serverUrl}/startswith?searchword={userInput}");
+
         displayCount = 10;
         UpdateView();
         searchString = $"Your search resulted in {searchResults.Length} word(s) starting with '{userInput}'";   

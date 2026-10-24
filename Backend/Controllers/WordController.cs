@@ -34,6 +34,21 @@ public class WordController : ControllerBase
     }
     
     [HttpGet]
+    [Route("startswith")]
+    public string[] GetStartswith1([FromQuery] string searchword)
+    {
+        List<string> matches = new List<string>(); // list is easier to work with than array
+        
+        foreach (string word in allWords)
+        {
+            if (word.StartsWith(searchword, StringComparison.OrdinalIgnoreCase)) // ignore case
+            {
+                matches.Add(word);
+            }
+        }
+        return matches.ToArray();
+    }
+    [HttpGet]
     [Route("contains/{searchword}")]
     public string[] GetContains(string searchword)
     {
