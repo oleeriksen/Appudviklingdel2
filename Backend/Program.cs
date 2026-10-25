@@ -1,7 +1,9 @@
+using Backend.Repositories.BikeRepo;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddSingleton<IBikeRepository, BikeRepositorySQLite>();
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
@@ -9,6 +11,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.AllowAnyOrigin();
+            policy.AllowAnyMethod();
         });
 });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
