@@ -3,7 +3,7 @@
 @using BlazorApp1.Components
 @using Core
 <h3>TodoPage</h3>
-@if (items == null)
+@if (items != null)
 {
     @foreach (TodoItem item in items)
     {
