@@ -1,15 +1,18 @@
 @page "/todo"
+@inject HttpClient http
+@using System.Net
 @using BlazorApp1.Components
-@using Logic
+@using Core
 <h3>TodoPage</h3>
-
-@foreach (TodoItem item in items)
+@if (items == null)
 {
-    <span class=@ClassforIsDone(item) @onclick="() => OnCheckItem(item)"></span>
-    <span style="font-weight: bold; padding: 5px">@item.Text</span>
-    <br/>
+    @foreach (TodoItem item in items)
+    {
+        <span class=@ClassforIsDone(item) @onclick="() => OnCheckItem(item)"></span>
+        <span style="font-weight: bold; padding: 5px">@item.Text</span>
+        <br/>
+    }
 }
-
 <ModalDialog Title="OPret en ny todo... version 2" @ref="AddDialog">
     <div class="row p-3">
         <div class="col-md-4 mb-3">
@@ -25,13 +28,20 @@
     <button class="btn btn-primary" @onclick="OnClickAdd">Add</button>
 </div>
 @code {
-    List<TodoItem> items = new();
+    string serverUrl = "http://localhost:5029/api/todo";
+    
+    List<TodoItem>? items = new();
 
     string newItemText = "";
 
     string status = "";
 
     ModalDialog AddDialog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await http.GetFromJsonAsync<List<TodoItem>>($"{serverUrl}");
+    }
 
     private void OnClickAdd()
     {
@@ -40,14 +50,20 @@
 
     private string ClassforIsDone(TodoItem item) => item.IsDone ? "bi bi-check-circle" : "bi bi-circle";
 
-    private void OnCheckItem(TodoItem item)
+    private async Task OnCheckItem(TodoItem item)
     {
-        item.IsDone = !item.IsDone;
+        // update item
+        await http.PutAsJsonAsync($"{serverUrl}", item);
+        //Update UI
+        items = await http.GetFromJsonAsync<List<TodoItem>>($"{serverUrl}");
+
     }
 
-    private void OnClickOK()
+    private async Task OnClickOK()
     {
-        items.Add(new TodoItem() { Text = newItemText });
+        await http.PostAsJsonAsync($"{serverUrl}", new TodoItem() { Text = newItemText });
+        //Update UI
+        items = await http.GetFromJsonAsync<List<TodoItem>>($"{serverUrl}");
         newItemText = "";
         AddDialog.Close();
     }

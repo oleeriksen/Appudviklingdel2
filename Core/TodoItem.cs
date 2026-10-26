@@ -1,7 +1,8 @@
-namespace BlazorApp1.Logic;
+namespace Core;
 
 public class TodoItem
 {
+    public int Id { get; set; }
     public bool IsDone { get; set; }
     public string Text { get; set; } = "";
 }

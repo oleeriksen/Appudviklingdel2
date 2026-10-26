@@ -1,9 +1,11 @@
 using Backend.Repositories.BikeRepo;
+using Backend.Repositories.TodoRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSingleton<IBikeRepository, BikeRepositorySQLite>();
+builder.Services.AddSingleton<ITodoRepository, TodoRepositoryInMemory>();
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
@@ -12,6 +14,7 @@ builder.Services.AddCors(options =>
         {
             policy.AllowAnyOrigin();
             policy.AllowAnyMethod();
+            policy.AllowAnyHeader();
         });
 });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
