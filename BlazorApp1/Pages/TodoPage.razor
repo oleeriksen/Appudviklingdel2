@@ -1,6 +1,5 @@
 @page "/todo"
 @inject HttpClient http
-@using System.Net
 @using BlazorApp1.Components
 @using Core
 <h3>TodoPage</h3>
@@ -13,7 +12,7 @@
         <br/>
     }
 }
-<ModalDialog Title="OPret en ny todo... version 2" @ref="AddDialog">
+<ModalDialog Title="Opret en ny todo... version 2" @ref="AddDialog">
     <div class="row p-3">
         <div class="col-md-4 mb-3">
             <InputText placeholder = "enter title of todo item" class="form-control" @bind-Value="newItemText"></InputText>
@@ -61,7 +60,8 @@
 
     private async Task OnClickOK()
     {
-        await http.PostAsJsonAsync($"{serverUrl}", new TodoItem() { Text = newItemText });
+        TodoItem newItem = new TodoItem() { Text = newItemText };
+        await http.PostAsJsonAsync($"{serverUrl}", newItem);
         //Update UI
         items = await http.GetFromJsonAsync<List<TodoItem>>($"{serverUrl}");
         newItemText = "";
