@@ -17,6 +17,12 @@ public class WordController : ControllerBase
         return allWords.Take(n).ToArray();
     }
     
+    /// <summary>
+    /// The function will filter all the words and return an array of words starting with
+    /// searchword
+    /// </summary>
+    /// <param name="searchword">the query</param>
+    /// <returns>An array if strings</returns>
     [HttpGet]
     [Route("startswith/{searchword}")]
     public string[] GetStartswith(string searchword)
