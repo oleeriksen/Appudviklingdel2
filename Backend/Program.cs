@@ -5,7 +5,7 @@ using Backend.Repositories.TodoRepo;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<IBikeRepository, BikeRepositorySQLite>();
+builder.Services.AddSingleton<IBikeRepository, BikeRepositoryMongoDB>();
 builder.Services.AddSingleton<ITodoRepository, TodoRepositoryInMemory>();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>
