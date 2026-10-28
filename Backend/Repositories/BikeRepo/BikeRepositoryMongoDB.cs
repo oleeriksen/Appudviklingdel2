@@ -10,7 +10,7 @@ public class BikeRepositoryMongoDB :IBikeRepository
 
     public BikeRepositoryMongoDB() {
             // atlas database
-            var password = "xl2GH1Uxztjtstwf"; //add
+            var password = ""; //add
             var mongoUri = $"mongodb+srv://olee58:{password}@cluster0.olmnqak.mongodb.net/?retryWrites=true&w=majority";
            
             //local mongodb
