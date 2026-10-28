@@ -53,6 +53,9 @@ public class BikeRepositoryMongoDB :IBikeRepository
             // it is very unlikely
             //int newid = Guid.NewGuid().GetHashCode();
             //item.Id = newid;
+            // or even simpler - and working almost every time...
+            // int newid = Random.Shared.Next(); // just a random integer
+            
             bikeCollection.InsertOne(item);
            
         }
@@ -74,10 +77,9 @@ public class BikeRepositoryMongoDB :IBikeRepository
 
         
         
-        /*public Bike[] GetAllByBrand(string brand) {
+        public List<Bike> GetAllByBrand(string brand) {
             var brandFilter = Builders<Bike>.Filter.Where(r => r.Brand.Equals(brand));
-            return bikeCollection.Find(brandFilter).ToList().ToArray();
-
+            return bikeCollection.Find(brandFilter).ToList();
         }
 
         public void Update(Bike item)
@@ -90,6 +92,6 @@ public class BikeRepositoryMongoDB :IBikeRepository
                 .Set(x => x.ImageUrl, item.ImageUrl);
             bikeCollection.UpdateOne(x => x.Id == item.Id, updateDef);
             
-        }*/
+        }
  
 }
