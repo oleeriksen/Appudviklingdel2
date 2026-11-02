@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<IBikeRepository, BikeRepositoryMongoDB>();
 builder.Services.AddSingleton<ITodoRepository, TodoRepositoryInMemory>();
-builder.Services.AddSingleton<IWorkshopRepo, WorkshopRepoInMemory>();
+builder.Services.AddSingleton<IWorkshopRepo, WorkshopRepoMongodb>();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>

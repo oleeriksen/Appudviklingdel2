@@ -6,5 +6,5 @@ public class User
     public string Name { get; set; } = string.Empty;
     public string Mail { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
-    public List<Clothing> Cloths { get; set; } = new();
+    public List<Clothing> Clothings { get; set; } = new();
 }
