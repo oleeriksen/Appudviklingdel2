@@ -1,6 +1,4 @@
-using Backend.Repositories.BikeRepo;
 using Backend.Repositories.WorkshopRepo;
-using Core;
 using Core.workshop;
 using Microsoft.AspNetCore.Mvc;
 

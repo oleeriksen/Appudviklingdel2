@@ -9,4 +9,6 @@ public class Clothing
     public string Size { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
     public int Owner { get; set; }
+
+    public int? Borrower { get; set; }
 }
