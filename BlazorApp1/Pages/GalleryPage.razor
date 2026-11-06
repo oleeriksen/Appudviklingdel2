@@ -1,0 +1,68 @@
+@page "/gallery"
+@using BlazorApp1.Service
+@inject FileService fileService
+<h3>Mit galleri</h3>
+
+<h3>Add image</h3>
+
+@if (keys != null)
+{
+    <div class="images-grid">
+    @foreach (string key in keys)
+    {
+        <div class="image-item">
+            <scan>@key</scan><br/>
+            <img src="@fileService.ConvertToUrl(key)" alt="Mit billede" width="100" height="100"/>
+            <button class="btn btn-close" @onclick="() => DeleteFile(key)"></button>
+        </div>
+    }
+    </div>
+}
+else
+{
+    <p>Waiting for fileserver....</p>
+}
+
+<InputFile OnChange="@UploadFile" accept="image/png, image/jpeg" />
+<p>@statusMessage</p>
+
+
+@code {
+    
+    private string statusMessage = "<no status message - yet>";
+    
+    private List<string>? keys;
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        keys = await fileService.GetAllKeys();
+    }
+
+    private async Task UploadFile(InputFileChangeEventArgs e)
+    {
+        // compute a stream to the file chosen by the user
+        var file = e.File;
+        var stream = file.OpenReadStream(maxAllowedSize: 10_000_000); // fx 10 MB
+        
+        var res = await fileService.SendFile(file.Name, stream);
+        
+        statusMessage = res.success ? 
+            $"Success! Info fra server: <{res.info}>" : 
+            $"Fejl: {res.info}";
+        
+        keys = await fileService.GetAllKeys();
+    }
+
+    private async Task DeleteFile(string key)
+    {
+        var resp = await fileService.DeleteFile(key);
+        
+        statusMessage = resp.success ? 
+            $"Success! Info fra server:{resp.info}" : 
+            $"Fejl: {resp.info}";
+        
+        keys = await fileService.GetAllKeys();
+    }
+    
+}

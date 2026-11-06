@@ -1,5 +1,6 @@
 using System.Reflection;
 using Backend.Repositories.BikeRepo;
+using Backend.Repositories.FileRepo;
 using Backend.Repositories.TodoRepo;
 using Backend.Repositories.WorkshopRepo;
 
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IBikeRepository, BikeRepositoryMongoDB>();
 builder.Services.AddSingleton<ITodoRepository, TodoRepositoryInMemory>();
 builder.Services.AddSingleton<IWorkshopRepo, WorkshopRepoMongodb>();
+builder.Services.AddSingleton<IFileRepository, PhysicalFileRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>
