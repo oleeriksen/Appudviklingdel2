@@ -1,18 +1,29 @@
 ﻿@page "/it"
 
-<h3></h3>
+<h3>Input text</h3>
 
-<InputText @bind-Value="simpleInput"/>
 
-<InputText @bind-Value="input" @oninput="OnInput" />
+<input @bind="input" @bind:event="oninput" />
 
-<button @onclick="Check">Check</button>
+
+@foreach (var s in GetHistorik())
+{
+    <p>@s</p>
+}
 
 @code {
 
     string simpleInput = "";
 
+    List<string> historik = new();
+
     string input = "";
+
+    List<string> GetHistorik()
+    {
+        historik.Add($"Input received: {input}");
+        return historik;
+    }
 
     void OnInput(ChangeEventArgs e)
     {
